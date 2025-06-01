@@ -1,3 +1,18 @@
-RECV 0, 1000 1748360724.1237843
-RECV 1, 1000 1748360726.4086168
-RECV 2, 1100 1748360726.4544125
+Received packet 1 of packet train 1 at time 1748814212.9112535
+Received packet 2 of packet train 1 at time 1748814212.9196508
+Received packet 3 of packet train 1 at time 1748814212.921611
+Received packet 4 of packet train 1 at time 1748814212.9227896
+Received packet 5 of packet train 1 at time 1748814212.923972
+Received packet 1 of packet train 2 at time 1748814212.9351432
+Received packet 2 of packet train 2 at time 1748814212.936601
+Received packet 3 of packet train 2 at time 1748814212.9377007
+Received packet 4 of packet train 2 at time 1748814212.9387891
+Received packet 5 of packet train 2 at time 1748814212.9400094
+Received packet 6 of packet train 2 at time 1748814212.9412458
+Received packet 7 of packet train 2 at time 1748814212.9424388
+Received packet 8 of packet train 2 at time 1748814212.943648
+Received packet 9 of packet train 2 at time 1748814212.9449568
+Received packet 10 of packet train 2 at time 1748814212.9462726
+Received packet 1 of packet train 3 at time 1748814212.9775174
+Received packet 2 of packet train 3 at time 1748814212.9793062
+Received packet 3 of packet train 3 at time 1748814212.9812112

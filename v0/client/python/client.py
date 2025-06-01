@@ -29,16 +29,35 @@ def run_client(config):
     }
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.settimeout(5.0)
+    
+    json_string = json.dumps(request)
+    json_bytes = json_string.encode('utf-8')
 
-    sock.sendto(json.dumps(request).encode(), (SERVER, PORT))
-    response, addr = sock.recvfrom(BUFFER_SIZE)
+    message = b'\x01' + json_bytes
+    
+    sock.sendto(message, (SERVER, PORT))
+ 
+    with open('packet_trains.json', 'r') as f:
+        patterns = json.load(f)
+    
+    json_string = json.dumps(patterns)
+    json_bytes = json_string.encode('utf-8')
+    
+    message = b'\x02' + json_bytes
+    
+    sock.sendto(message, (SERVER, PORT))
 
-    print(response)
-    if response == "Authenticated":
-        print(f"[+] Sent authenticated request as {username}")
-    else:
-        print(f"[-] Username {username} is not authenticated")
+    while True:
+        response, addr = sock.recvfrom(BUFFER_SIZE)
+        data = json.loads(response.decode())
+        
+        packet_train = data["packet_train"]
+        packet_id = data["packet_id"]
+        timestamp = data["timestamp"]
+        print(f"Received packet {packet_id + 1} of packet train {packet_train} at time {timestamp}")
+
+        with open("client_log.txt", "a") as log_file:
+            log_file.write(f"Received packet {packet_id + 1} of packet train {packet_train} at time {timestamp}\n")
 
 if __name__ == '__main__':
     config = load_config("config.json")
