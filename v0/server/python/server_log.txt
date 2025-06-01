@@ -1,3 +1,18 @@
-SENT 0 1748360726.38713
-SENT 1 1748360726.408988
-SENT 2 1748360726.4548032
+Sent packet 1 of packet train 1 at time 1748814212
+Sent packet 2 of packet train 1 at time 1748814212
+Sent packet 3 of packet train 1 at time 1748814212
+Sent packet 4 of packet train 1 at time 1748814212
+Sent packet 5 of packet train 1 at time 1748814212
+Sent packet 1 of packet train 2 at time 1748814212
+Sent packet 2 of packet train 2 at time 1748814212
+Sent packet 3 of packet train 2 at time 1748814212
+Sent packet 4 of packet train 2 at time 1748814212
+Sent packet 5 of packet train 2 at time 1748814212
+Sent packet 6 of packet train 2 at time 1748814212
+Sent packet 7 of packet train 2 at time 1748814212
+Sent packet 8 of packet train 2 at time 1748814212
+Sent packet 9 of packet train 2 at time 1748814212
+Sent packet 10 of packet train 2 at time 1748814212
+Sent packet 1 of packet train 3 at time 1748814212
+Sent packet 2 of packet train 3 at time 1748814212
+Sent packet 3 of packet train 3 at time 1748814212
