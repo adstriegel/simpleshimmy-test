@@ -1,9 +1,9 @@
 import socket, json, time
 import hmac
 import hashlib
+import uuid
+import argparse
 
-SERVER = '127.0.0.1'
-PORT = 9999
 BUFFER_SIZE = 4096
 
 def generate_hmac(key, username, timestamp, payload_dict):
@@ -15,15 +15,17 @@ def load_config(path):
         config = json.load(f)
     return config
 
-def run_client(config):
+def run_client(host, port, config, pattern):
     username = config.pop("username")
     key = config.pop("key")
     timestamp = str(int(time.time()))
     signature = generate_hmac(key, username, timestamp, config)
-
+    nonce = str(uuid.uuid4())
+    
     request = {
         "username": username,
         "timestamp": timestamp,
+        "nonce": nonce,
         "signature": signature,
         "payload": config
     }
@@ -35,7 +37,7 @@ def run_client(config):
 
     message = b'\x01' + json_bytes
     
-    sock.sendto(message, (SERVER, PORT))
+    sock.sendto(message, (host, port))
  
     with open('packet_trains.json', 'r') as f:
         patterns = json.load(f)
@@ -45,7 +47,7 @@ def run_client(config):
     
     message = b'\x02' + json_bytes
     
-    sock.sendto(message, (SERVER, PORT))
+    sock.sendto(message, (host, port))
 
     while True:
         response, addr = sock.recvfrom(BUFFER_SIZE)
@@ -59,9 +61,18 @@ def run_client(config):
         with open("client_log.txt", "a") as log_file:
             log_file.write(f"Received packet {packet_id + 1} of packet train {packet_train} at time {timestamp}\n")
 
+def main():
+    parser = argparse.ArgumentParser(description="UDP Client for Packet Train Transmission")
+    
+    parser.add_argument('--host', type=str, help='Server IP address')
+    parser.add_argument('--port', type=int, help='Server port')
+    parser.add_argument('--config', type=str, help='Config file to send')
+    parser.add_argument('--pattern', type=str, help='Pattern file to send')
+    
+    args = parser.parse_args()
+    
+    config = load_config(args.config)
+    run_client(args.host, args.port, config, args.pattern)
+    
 if __name__ == '__main__':
-    config = load_config("config.json")
-    run_client(config)
-
-
-
+    main()
