@@ -12,11 +12,19 @@ AUTHORIZED_USERS = {
     "bertram": "fightingirish"
 }
 
+used_nonces = set()
+
 def verify_hmac(key, username, timestamp, payload, received_signature):
     message = f"{username}|{timestamp}|{json.dumps(payload, sort_keys=True)}"
     expected_signature = hmac.new(key.encode(), message.encode(), hashlib.sha256).hexdigest()
     return hmac.compare_digest(received_signature, expected_signature)
 
+def is_nonce_fresh(nonce):
+    if nonce in used_nonces:
+        return False
+    used_nonces.add(nonce)
+    return True
+        
 def run_server():
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     sock.bind(('', PORT))
@@ -35,6 +43,7 @@ def run_server():
             
             username = json_data["username"]
             timestamp = json_data["timestamp"]
+            nonce = json_data["nonce"]
             signature = json_data["signature"]
             payload = json_data["payload"]
             
@@ -44,6 +53,10 @@ def run_server():
             
             if not verify_hmac(AUTHORIZED_USERS[username], username, timestamp, payload, signature):
                 print("[-] Invalid signature")
+                continue
+            
+            if not is_nonce_fresh(nonce):
+                print("[-] Reused nonce - possibly replay attack")
                 continue
             
             print(f"[+] Authenticated request from {username}")
