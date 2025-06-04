@@ -71,8 +71,8 @@ def run_server():
                 
                 num_packets = sequence["num_packets"]
                 packet_size = sequence["packets_size"]
-                local_gap = sequence["local_gap"] / 1000
-                global_gap = sequence["global_gap"] / 1000
+                local_gap = sequence["local_gap"]
+                global_gap = sequence["global_gap"]
                 
                 for packet in range(num_packets):
                     payload = {
@@ -86,8 +86,6 @@ def run_server():
                     sock.sendto(data, addr)
                     print(f"Sent packet {packet + 1} of packet train {packet_train} at time {timestamp}")
                     
-                    with open("server_log.txt", "a") as log_file:
-                        log_file.write(f"Sent packet {packet + 1} of packet train {packet_train} at time {timestamp}\n")
                     time.sleep(local_gap)
             
                 time.sleep(global_gap)
