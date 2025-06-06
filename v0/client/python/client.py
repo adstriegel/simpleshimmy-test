@@ -29,6 +29,8 @@ def run_client(host, port, config, pattern):
         "signature": signature,
         "payload": config
     }
+    
+    print(f"Pattern: {pattern}")
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     
@@ -39,7 +41,7 @@ def run_client(host, port, config, pattern):
     
     sock.sendto(message, (host, port))
  
-    with open('packet_trains.json', 'r') as f:
+    with open(pattern, 'r') as f:
         patterns = json.load(f)
     
     json_string = json.dumps(patterns)
