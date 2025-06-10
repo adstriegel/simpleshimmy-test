@@ -26,11 +26,18 @@ def extract_gaps(pcap_file, local_gap):
     print(f"Standard deviation: {std_deviation:.6f} seconds")
     print(f"Minimum gap: {min_gap:.6f} seconds")
     print(f"Maximum gap: {max_gap:.6f} seconds")
-    
+     
     average_microseconds = average * math.pow(10, 6)   
+    
+    
+    diff = average_microseconds - local_gap
+    print(f"Difference: {diff:.6f} seconds")
     
     with open("plot.csv", "a") as f:
         f.write(f"{local_gap},{average_microseconds:.1f}\n")
+
+    with open("diff.csv", "a") as f:
+        f.write(f"{local_gap},{diff}\n")
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Extract inter-packet time gaps from a pcap.")

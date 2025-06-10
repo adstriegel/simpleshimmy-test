@@ -2,7 +2,7 @@
 	"1": {
 		"num_packets": 100,
 		"packets_size": 1000,
-		"local_gap": 0.0001,
+		"local_gap": 0.00035,
 		"global_gap": 0
 	}
 }

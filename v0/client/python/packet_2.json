@@ -1,8 +1,8 @@
 {	
 	"1": {
 		"num_packets": 100,
-		"packets_size": 1200,
-		"local_gap": 0.0004,
+		"packets_size": 1000,
+		"local_gap": 0.00015,
 		"global_gap": 0
 	}
 }
