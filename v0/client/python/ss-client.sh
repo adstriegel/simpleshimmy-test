@@ -1,3 +1,0 @@
-#!/bin/.....
-
-# Shell script for launching the Python client with default settings

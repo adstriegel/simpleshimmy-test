@@ -1,6 +1,8 @@
 import socket, time, json, threading
 import hmac
 import hashlib
+import argparse
+import csv
 
 PORT = 9999
 BUFFER_SIZE = 4096
@@ -24,10 +26,14 @@ def is_nonce_fresh(nonce):
         return False
     used_nonces.add(nonce)
     return True
+
+def append_gap_to_csv(filename, intended_gap, average_gap):
+    with open(filename, 'a') as f:
+        f.write(f"{intended_gap:.6f},{average_gap:.6f}\n")
         
-def run_server():
+def run_server(timings, local_gap):
     sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    sock.bind(('', PORT))
+    sock.bind(('0.0.0.0', PORT))
     print(f"[Server] Listening on UDP port {PORT}")
 
     while True:
@@ -65,8 +71,9 @@ def run_server():
         
         elif type_byte == 0x02:
             print("Received pattern file from client!")
+            durations = []
             
-            for packet_train in range(1, NUM_PACKET_TRAINS + 1, 1):
+            for packet_train in range(1, NUM_PACKET_TRAINS + 1, 1): 
                 sequence = json_data[f"{packet_train}"]
                 
                 num_packets = sequence["num_packets"]
@@ -75,6 +82,8 @@ def run_server():
                 global_gap = sequence["global_gap"]
                 
                 for packet in range(num_packets):
+                    start_loop = time.time()
+                    
                     payload = {
                         "packet_train": packet_train,
                         "packet_id": packet,
@@ -83,15 +92,57 @@ def run_server():
                     
                     data = json.dumps(payload).encode()
                     data += b' ' * max(0, packet_size - len(data))
+					
                     sock.sendto(data, addr)
-                    print(f"Sent packet {packet + 1} of packet train {packet_train} at time {timestamp}")
-                    
+                    # print(f"Sent packet {packet + 1} of packet train {packet_train} at time {timestamp}")
+                    	
                     time.sleep(local_gap)
+                    
+                    end_loop = time.time()
+                    duration = end_loop - start_loop
+                    durations.append(duration)
+                    
+                    # gaps = [duration - local_gap for duration in durations]
+                 
+                # time.sleep(global_gap)
+			
+            '''
+            with open(timings, 'a') as f:
+                for send_duration in send_durations:
+                    send_duration *= 1000000
+                    f.write(f"{send_duration}\n")
             
-                time.sleep(global_gap)
+            send_durations_micro = [d * 1_000_000 for d in send_durations]
             
-        
+            with open(timings, 'a') as f:
+                for dur in send_durations_micro:
+                    f.write(f"{dur}\n")
+            
+            '''
+            
+            intended_gap = local_gap * 1_000_000
+            gaps = [(duration - local_gap) * 1_000_000 for duration in durations]
+            # durations = [duration * 1_000_000 for duration in durations]
+            
+            with open(timings, mode="a", newline="") as csvfile:
+                writer = csv.writer(csvfile)
+                for gap in gaps:
+                    writer.writerow([intended_gap, gap])
+                
+            # send_durations.clear()
+            durations.clear()
+            
+            time.sleep(global_gap)
+		
 if __name__ == '__main__':
-    run_server()
+    parser = argparse.ArgumentParser(description="UDP Server for Packet Train Transmission")
+    parser.add_argument('--timings', type=str, help='Timings directory')
+    parser.add_argument('--intended', type=float, help='Intended Gap')
+    args = parser.parse_args()
+    run_server(args.timings, args.intended)
+    
+    
+
+# vim: set sts=4 sw=4 ts=8 expandtab ft=python:
 
 
